@@ -2,13 +2,16 @@
   "name": "mini-project-middleware-konfigurasi",
   "version": "1.0.0",
   "description": "Starter middleware & konfigurasi backend - Pertemuan 5 PAW II",
+  "type": "module",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.14"
   }
 }

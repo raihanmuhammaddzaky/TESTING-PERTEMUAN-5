@@ -5,23 +5,41 @@
 // Jalankan dengan: npm install && npm start
 // Salin .env.example menjadi .env sebelum menjalankan.
 
-const express = require("express");
+import 'dotenv/config';
+import cors from 'cors';
+import express from 'express';
+
 const app = express();
 
 // TODO 1: muat variabel dari .env menggunakan dotenv
 // (require('dotenv').config() -- letakkan di baris paling atas)
 
 // TODO 2: gunakan process.env.PORT sebagai PORT, dengan fallback 3000
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 // TODO 3: buat middleware kustom bernama `logger` yang mencatat
 // method, url, dan waktu (new Date().toISOString()) setiap request,
 // lalu daftarkan dengan app.use(logger) SEBELUM route lain
 
+const logger = (req, res, next) => {
+  const method = req.method;
+  const url = req.url;
+  const time = new Date().toISOString();
+  console.log(`[${time}] ${method} ${url}`);
+  next();
+}
+
+app.use(logger);
+
 // TODO 4: import & gunakan middleware cors dari package 'cors'
 // agar frontend (mis. http://localhost:5173) dapat mengakses API ini
 
 app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 
 let mahasiswa = [
   { id: 1, nama: "Andi", jurusan: "Sistem Informasi" },
@@ -40,6 +58,7 @@ app.get("/mahasiswa/:id", (req, res, next) => {
     res.json(data);
   } catch (err) {
     // TODO 5: teruskan error ini ke error-handling middleware
+    next(err);
   }
 });
 
@@ -70,6 +89,11 @@ app.delete("/mahasiswa/:id", (req, res) => {
 // (paling bawah, setelah seluruh route), dengan signature
 // (err, req, res, next) -> log err.stack, lalu balas status 500
 // dengan JSON { message: 'Terjadi kesalahan pada server' }
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.json({ message: 'Terjadi kesalahan pada server' });
+})
 
 app.listen(PORT, () => {
   console.log(`Server berjalan di http://localhost:${PORT}`);
