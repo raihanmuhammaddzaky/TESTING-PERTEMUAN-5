@@ -3,11 +3,14 @@
 const express = require("express");
 const router = express.Router();
 const mahasiswaController = require("../controllers/mahasiswaController");
+const verifyToken = require("../middlewares/verificationToken");
 
 router.get("/", mahasiswaController.getAll);
 router.get("/:id", mahasiswaController.getById);
-router.post("/", mahasiswaController.create);
-router.put("/:id", mahasiswaController.update);
-router.delete("/:id", mahasiswaController.remove);
+
+
+router.post("/", verifyToken, mahasiswaController.create);
+router.put("/:id", verifyToken, mahasiswaController.update);
+router.delete("/:id", verifyToken, mahasiswaController.remove);
 
 module.exports = router;

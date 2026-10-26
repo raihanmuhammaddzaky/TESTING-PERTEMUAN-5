@@ -8,18 +8,37 @@ const MAX_LIMIT = 100;
 
 // GET /mahasiswa?prodiId=...&sort=nama&page=1&limit=10&fields=nama,nim
 exports.getAll = async (req, res) => {
-  // TODO: bangun object filter - jika req.query.prodiId ada, tambahkan ke filter
+  // 1. Filter: jika req.query.prodiId ada, tambahkan ke filter
   const filter = {};
+  if (req.query.prodiId) {
+    filter.prodiId = req.query.prodiId;
+  }
 
-  // TODO: ambil page dari req.query.page (default 1, minimal 1)
-  // TODO: ambil limit dari req.query.limit (default 10), batasi maksimum dengan MAX_LIMIT
-  // TODO: ambil sortField dari req.query.sort (default 'createdAt')
-  // TODO: ambil projection dari req.query.fields (ubah "nama,nim" menjadi "nama nim")
+  // 2. Pagination: page & limit
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.min(MAX_LIMIT, Math.max(1, parseInt(req.query.limit) || 10));
 
-  // TODO: panggil Mahasiswa.find(filter).populate('prodiId').select(projection)
-  //   .sort({ [sortField]: 1 }).skip((page - 1) * limit).limit(limit)
-  // TODO: hitung total dengan Mahasiswa.countDocuments(filter)
-  // TODO: kirim res.json({ data, page, limit, total })
+  // 3. Sorting: field sort (default 'createdAt')
+  const sortField = req.query.sort || "createdAt";
+
+  // 4. Projection: ubah "nama,nim" menjadi "nama nim"
+  const projection = req.query.fields
+    ? req.query.fields.split(",").join(" ")
+    : null;
+
+  // 5. Query data dengan populate, projection, sorting, dan pagination
+  const data = await Mahasiswa.find(filter)
+    .populate("prodiId")
+    .select(projection)
+    .sort({ [sortField]: 1 })
+    .skip((page - 1) * limit)
+    .limit(limit);
+
+  // 6. Hitung total data berdasarkan filter
+  const total = await Mahasiswa.countDocuments(filter);
+
+  // 7. Kirim response JSON
+  res.json({ data, page, limit, total });
 };
 
 exports.getById = async (req, res) => {

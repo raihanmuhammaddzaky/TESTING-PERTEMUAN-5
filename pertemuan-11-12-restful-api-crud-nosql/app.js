@@ -2,7 +2,10 @@
 // TODO 3: lengkapi baris yang ditandai TODO di bawah ini.
 // Jalankan dengan: npm install && npm start (setelah menyalin .env.example menjadi .env)
 
-// TODO: require('express-async-errors') di baris PALING ATAS, sebelum require express
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
+require("express-async-errors");
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
@@ -12,14 +15,16 @@ const PORT = process.env.PORT || 3000;
 
 const mahasiswaRoutes = require("./routes/mahasiswaRoutes");
 const prodiRoutes = require("./routes/prodiRoutes");
+const authRoutes = require("./routes/authRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 
 app.use(express.json());
 
+app.use("/auth", authRoutes);
 app.use("/mahasiswa", mahasiswaRoutes);
 app.use("/prodi", prodiRoutes);
 
-// TODO: pasang errorHandler dengan app.use(errorHandler) di sini, PALING AKHIR
+app.use(errorHandler);
 
 mongoose
   .connect(process.env.MONGODB_URI)

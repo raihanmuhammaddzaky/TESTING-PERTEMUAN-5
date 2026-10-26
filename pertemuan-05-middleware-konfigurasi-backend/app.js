@@ -1,9 +1,4 @@
-// Mini Project - Pertemuan 5: Middleware & Konfigurasi Backend
-// Melanjutkan RESTful API "mahasiswa" dari Pertemuan 3-4.
-//
-// TODO Mahasiswa: lengkapi setiap bagian sesuai komentar.
-// Jalankan dengan: npm install && npm start
-// Salin .env.example menjadi .env sebelum menjalankan.
+
 
 import 'dotenv/config';
 import cors from 'cors';
@@ -11,15 +6,8 @@ import express from 'express';
 
 const app = express();
 
-// TODO 1: muat variabel dari .env menggunakan dotenv
-// (require('dotenv').config() -- letakkan di baris paling atas)
-
-// TODO 2: gunakan process.env.PORT sebagai PORT, dengan fallback 3000
 const PORT = process.env.PORT;
 
-// TODO 3: buat middleware kustom bernama `logger` yang mencatat
-// method, url, dan waktu (new Date().toISOString()) setiap request,
-// lalu daftarkan dengan app.use(logger) SEBELUM route lain
 
 const logger = (req, res, next) => {
   const method = req.method;
@@ -31,8 +19,7 @@ const logger = (req, res, next) => {
 
 app.use(logger);
 
-// TODO 4: import & gunakan middleware cors dari package 'cors'
-// agar frontend (mis. http://localhost:5173) dapat mengakses API ini
+
 
 app.use(express.json());
 
